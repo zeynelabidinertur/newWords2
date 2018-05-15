@@ -1,0 +1,58 @@
+
+{% extends 'music/base.html' %}
+{% block body %}
+    <div class="container-fluid" style="padding-top: 100px">
+        <div class="row">
+            <div class="col-sm-12 col-md-7">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h2>Add Bookshelf</h2><br>
+                        {% if not_completed %}
+                            <div class="alert alert-danger">
+                                <strong>You are required to complete all the fields</strong>
+                            </div>
+                        {% endif %}
+                        <form class="form-horizontal" action="{% url 'music:bookshelf-create' %}" method="post"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="email">Bookshelf Label:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Bookshelf Label" name="bookshelf_label">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="email">Description:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Description"
+                                           name="description">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="email">Bookshelf Logo:</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" value="more hej" name="bookshelf_logo">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="email">Bookshelf Privacy:</label>
+                                <div class="col-sm-9">
+                                    <input type="radio"  value="1" name="bookshelf_privacy"> Public <br>
+                                    <input type="radio"  value="0" name="bookshelf_privacy"> Private <br>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-default">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

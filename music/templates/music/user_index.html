@@ -1,0 +1,41 @@
+{% extends 'music/base.html' %}
+{% load static %}
+{% block background_image %}
+    style="background-image: url('{% static "music/images/a.jpg" %}');
+    background-size: cover; background-position: top; background-repeat: no-repeat;"
+{% endblock %}
+{% block body %}
+
+    <ul style="padding-top: 100px; margin-left: 51px">
+        {% for album in all_albums %}
+            <li style="display:inline-block">
+                <div class="gallery"
+                     style="background-color: tan; opacity: 0.9; margin:20px; padding:10px; height:350px; width: 270px; text-align: center; border-radius: 10px;">
+                    <a href="{% url 'music:user-album-detail' album.id %}">
+                        <img src="{{ album.album_logo.url }}" style="width: 245px;height: 250px;">
+                    </a>
+                    <div class="desc" style="overflow:hidden; text-overflow: ellipsis;"><a
+                            href="{% url 'music:user-album-detail' album.id %}"
+                            style="white-space: nowrap; text-overflow: ellipsis; text-align: center;">{{ album.album_title }}
+                        <br> {{ album.artist }}</a></div>
+
+                    <a href="{% url 'music:album-update' album.id %}">
+                        <button type="submit" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-edit"></span> Update
+                        </button>
+                    </a>
+
+                    <form action="{% url 'music:album-delete' album.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="album_id" value="{{ album_id }}"/>
+                        <button type="submit" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-trash"></span> Delete
+                        </button>
+                    </form>
+                </div>
+
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends 'music/base.html' %}
+{% load static %}
+{% block background_image %}
+    style="background-image: url('{% static "music/images/a.jpg" %}');
+    background-size: cover; background-position: top; background-repeat: no-repeat;"
+{% endblock %}
+
+{% block body %}
+
+    <div class="row index-albums" id="albums" style="margin: 50px 10px; padding-bottom: 0px; padding-left: 10px;
+                                                    align: center"
+         onmouseover='document.getElementById("myTable").style.display = "none"'>
+        <div class="container" style="margin: 0px 50px 0px 70px; padding: 0px;">
+            <h3 class="tittle" style="color: white; margin: 25px 15px 7px 15px; padding-bottom: 0px;">Popular
+                Bookshelfs</h3>
+            <div class='container-fluid' style="margin-bottom: 0px; padding: 0px; height: 145px;">
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px 0px 0px;">
+                    <a href="{% url 'music:song-set' album.id %}">
+                        <div class="max-gal-effect slow-zoom horizontal" style="
+                         height: 200px; width: 230px; border-color: #d7d7d7;">
+                            <div class="img-box" style="height: 200px; width: 230px;">
+                                <img style="height: 100%; width: 100%; border-radius: 5px;"
+                                     src="{{ album.album_logo.url }}"
+                                     class="img-responsive" alt=" "/>
+                            </div>
+                            <div class="max-text-box">
+                                <div class="max-gal-text">
+                                    <h4>{{ album.album_title }}</h4>
+                                    <p>{{ album.artist }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    <a href="{% url 'music:song-set' album1.id %}">
+                        <div class="max-gal-effect slow-zoom horizontal" style="
+                        height: 200px; width: 230px; border-color: #d7d7d7;">
+                            <div class="img-box" style="height: 200px; width: 230px;"><img
+                                    style="height: 100%; width: 100%; border-radius: 5px;"
+                                    src="{{ album1.album_logo.url }}"
+                                    class="img-responsive"
+                                    alt=" "/></div>
+                            <div class="max-text-box">
+                                <div class="max-gal-text">
+                                    <h4>{{ album1.album_title }}</h4>
+                                    <p>{{ album1.artist }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    <a href="{% url 'music:song-set' album2.id %}">
+                        <div class="max-gal-effect slow-zoom horizontal" style="
+                        height: 200px; width: 230px; border-color: #d7d7d7;">
+                            <div class="img-box" style="height: 200px; width: 230px;"><img
+                                    style="height: 100%; width: 100%; border-radius: 5px;"
+                                    src="{{ album2.album_logo.url }}"
+                                    class="img-responsive"
+                                    alt=" "/></div>
+                            <div class="max-text-box">
+                                <div class="max-gal-text">
+                                    <h4>{{ album2.album_title }}</h4>
+                                    <p>{{ album2.artist }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    <a href="{% url 'music:song-set' album3.id %}">
+                        <div class="max-gal-effect slow-zoom horizontal" style="
+                        height: 200px; width: 230px; border-color: #d7d7d7;">
+                            <div class="img-box" style="height: 200px; width: 230px;"><img
+                                    style="height: 100%; width: 100%; border-radius: 5px;"
+                                    src="{{ album3.album_logo.url }}"
+                                    class="img-responsive"
+                                    alt=" "/></div>
+                            <div class="max-text-box">
+                                <div class="max-gal-text">
+                                    <h4>{{ album3.album_title }}</h4>
+                                    <p>{{ album3.artist }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    <a href="{% url 'music:song-set' album4.id %}">
+                        <div class="max-gal-effect slow-zoom horizontal" style="
+                        height: 200px; width: 230px; border-color: #d7d7d7;">
+                            <div class="img-box" style="height: 200px; width: 230px;"><img
+                                    style="height: 100%; width: 100%; border-radius: 5px;"
+                                    src="{{ album4.album_logo.url }}"
+                                    class="img-responsive"
+                                    alt=" "/></div>
+                            <div class="max-text-box">
+                                <div class="max-gal-text">
+                                    <h4>{{ album4.album_title }}</h4>
+                                    <p>{{ album4.artist }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="albums" style="margin: 0px 10px; padding-bottom: 0px; padding-left: 10px;
+                                                    align: center">
+        <div class="container" style="margin: 0px 50px 0px 70px; padding: 0px;">
+            <h3 class="tittle" style="color: white; margin: 25px 15px 7px 15px; padding-bottom: 0px;">Popular
+                Books</h3>
+            <div class='container-fluid' style="margin-bottom: 0px; padding: 0px; height: 145px;">
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px 0px 0px;">
+                    {% if song.video_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('video_1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='video_1' class="video-player">
+                                    <source src="{{ song.video_file.url }}" type="video/mp4">
+                                    <h2>{{ song.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+
+                    {% elif song.audio_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('audio_1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='audio_1' class="video-player">
+                                    <source src="{{ song.audio_file.url }}" type="video/mp4">
+                                    <h2>{{ song.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <iframe width="350" height="262" src="{{ song.song_youtube_url }}"></iframe>
+                    {% endif %}
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    {% if song1.video_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('video_2')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='video_2' class="video-player">
+                                    <source src="{{ song1.video_file.url }}" type="video/mp4">
+                                    <h2>{{ song1.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song1.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+
+                    {% elif song1.audio_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('audio_2')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='audio_2' class="video-player">
+                                    <source src="{{ song1.audio_file.url }}" type="video/mp4">
+                                    <h2>{{ song1.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song1.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <iframe width="350" height="262" src="{{ song1.song_youtube_url }}"></iframe>
+                    {% endif %}
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    {% if song2.video_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('video_3')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='video_3' class="video-player">
+                                    <source src="{{ song2.video_file.url }}" type="video/mp4">
+                                    <h2>{{ song2.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song2.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+
+                    {% elif song2.audio_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('audio_3')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='audio_3' class="video-player">
+                                    <source src="{{ song2.audio_file.url }}" type="video/mp4">
+                                    <h2>{{ song2.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song2.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <iframe width="350" height="262" src="{{ song2.song_youtube_url }}"></iframe>
+                    {% endif %}
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 20px;">
+                    {% if song3.video_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('video_4')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='video_4' class="video-player">
+                                    <source src="{{ song3.video_file.url }}" type="video/mp4">
+                                    <h2>{{ song3.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song3.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+
+                    {% elif song3.audio_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('audio_4')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='audio_4' class="video-player">
+                                    <source src="{{ song3.audio_file.url }}" type="video/mp4">
+                                    <h2>{{ song3.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song3.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <iframe width="350" height="262" src="{{ song3.song_youtube_url }}"></iframe>
+                    {% endif %}
+                </div>
+                <div class="col-md-2" style="padding: 0px; margin: 0px 0px 0px 20px;">
+                    {% if song4.video_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('video_5')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='video_5' class="video-player">
+                                    <source src="{{ song4.video_file.url }}" type="video/mp4">
+                                    <h2>{{ song4.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song4.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+
+                    {% elif song4.audio_file %}
+                        <div class="video-box col-lg-2">
+                            <a class="video_play" onclick="playPause('audio_5')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id='audio_5' class="video-player">
+                                    <source src="{{ song4.audio_file.url }}" type="video/mp4">
+                                    <h2>{{ song4.song_title }}</h2>
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin-left: 10px;">
+                                        {{ song4.song_title }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <iframe width="350" height="262" src="{{ song4.song_youtube_url }}"></iframe>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function playPause(video) {
+            var myVideo = document.getElementById(video);
+            if (myVideo.paused)
+                myVideo.play();
+            else
+                myVideo.pause();
+        }
+
+    </script>
+
+{% endblock %}

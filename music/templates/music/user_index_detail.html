@@ -1,0 +1,360 @@
+{% extends 'music/base.html' %}
+{% load static %}
+
+{% block title %}Album Details{% endblock %}
+{% block background_image %}
+    style="background-image: url('{% static "music/images/music_notes_and_guitar_pick-wallpaper-1366x768.jpg" %}');
+    background-attachment: fixed;"
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid" style="padding-top: 100px;">
+        <div class="col-lg-3">
+            <img src="{{ album.album_logo.url }}" style="height:300px;width:300px; border-radius: 10px">
+
+            <h1 style="margin-top: 20px"><strong>{{ album.album_title }}</strong></h1>
+            <h3 style="margin-top: 10px"><strong>{{ album.artist }}</strong></h3>
+        </div>
+        <div class="col-lg-4" style="padding: 0px 0px 0px 50px">
+        {% if curr_user %}
+            <a href="{% url 'music:albums-add-mode' album.id %}" class="btn btn-default btn-sm" style="margin-top: 5px">
+                <span class="glyphicon glyphicon-plus"></span> Add Song
+            </a>
+            <a href="{% url 'music:song-upload' album.id %}">
+                <button type="submit" class="btn btn-default btn-sm" style="margin-top: 5px">
+                    <span class="glyphicon glyphicon-upload"></span> Upload Song
+                </button>
+            </a>
+        {% endif %}
+            <ul class="music-list" style="margin-top:20px">
+
+                {% if error_message %}
+                    <p><strong>{{ error_message }}</strong></p>
+                {% endif %}
+
+                {% if selected %}
+                    <div class="container-fluid">
+                        <form action="{% url 'music:song-delete' album.id %}" method="post">
+                            {% csrf_token %}
+                            {% for song in album.song_set.all %}
+                                <li style="list-style-type: none;">
+                                    <h4>
+                                        <div class="container-fluid col-lg-12">
+                                            <div class="row" style="margin-top: 5px;">
+                                                <input type="checkbox" name="song{{ song.id }}"
+                                                       value="{{ song.id }}"/> <!--onclick="selectall(this)"-->
+                                                <a href="{% url 'music:play-song' album.id song.id %}"
+                                                   style="overflow:hidden; text-overflow: ellipsis; text-decoration: none"> {{ song.song_title }}
+                                                </a>
+                                            </div>
+                                            <!--
+                                            <div class="container-fluid col-lg-10 row" style="margin-left: 5px">
+                                                <div class="col-lg-4" style="padding: 0px 0px;">
+                                                    <input type="checkbox" name="song{{ song.id }}-video"
+                                                           value="{{ song.id }}" style="padding-right: 10px;">
+                                                    <small>Video</small>
+                                                </div>
+                                                <div class="col-lg-4" style="padding: 0px 0px;">
+                                                    <input type="checkbox" name="song{{ song.id }}-audio"
+                                                           value="{{ song.id }}" style="padding-right: 10px;">
+                                                    <small>Audio</small>
+                                                </div>
+                                                <div class="col-lg-4" style="padding: 0px 0px;">
+                                                    <input type="checkbox" name="song{{ song.id }}-youtube"
+                                                           value="{{ song.id }}" style="padding-right: 10px;">
+                                                    <small>Youtube</small>
+                                                </div>
+                                            </div> -->
+                                        </div>
+
+                                    </h4>
+                                </li>
+                            {% endfor %}
+                            <div class="container-fluid col-lg-2">
+                                <button type="submit" class="btn btn-default btn-sm" style="margin-top: 20px">
+                                    <span class="glyphicon glyphicon-trash"></span> Delete
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="container-fluid">
+                        {% if album.song_set.all %}
+                            {% for song in album.song_set.all %}
+                                <li style="list-style-type: none;">
+                                    <h4>
+                                        <a href="{% url 'music:play-song' album.id song.id %}"
+                                           style="overflow:hidden; text-overflow: ellipsis; text-decoration: none">
+                                            <i class="glyphicon glyphicon-play"></i> {{ song.song_title }}
+                                        </a>
+                                    </h4>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <h4>You have no songs. <br><a href="{% url 'music:song-upload' album.id %}">
+                                Click</a> here to add a song!</h4>
+                        {% endif %}
+
+                        {% if curr_user %}
+                            {% if song or play_song %}
+                                <a href="{% url 'music:song-select' album.id %}">
+                                    <button type="submit" class="btn btn-default btn-sm"
+                                            style="margin-top: 20px">
+                                        <span class="glyphicon glyphicon-scale"></span> Select
+                                    </button>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+            </ul>
+        </div>
+        <div class="col-lg-5">
+            <ul class="nav nav-tabs">
+                <li class=""><a data-toggle="tab" href="#video">Video</a></li>
+                <li><a data-toggle="tab" href="#audio">Audio</a></li>
+                <li><a data-toggle="tab" href="#youtube">Youtube</a></li>
+            </ul>
+            {% if play_song %}
+                <div class="tab-content" style="padding-top: 20px">
+                    {% if play_song.video_file %}
+                        <div id="video" class="tab-pane fade in active video-box-detail">
+                            <a class="video_play" onclick="playPause('video1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id="video1" class="video-player-detail" controls>
+                                    <source src="{{ play_song.video_file.url }}" type="video/mp4">
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin: 0px 0px 10px 20px;">
+                                        {{ play_song.song_title }} - {{ album.artist }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div id="video" class="tab-pane fade in active video-box-detail" style="opacity: 0.5">
+                            <form id='video-form' action="{% url 'music:video-upload' album.id play_song.id %}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if curr_user %}
+                                    <input class="video_file" type="file" name="video_file" tooltip="pseeee"
+                                           onchange="document.getElementById('video-form').submit();">
+
+                                    <h3 class='upload-text'>Click here to uplaod video file</h3>
+                                {% else %}
+                                    <h3 class='missing-video'>No video file</h3>
+                                {% endif %}
+                            </form>
+                        </div>
+                    {% endif %}
+                    {% if play_song.audio_file %}
+                        <div id="audio" class="tab-pane fade in video-box-detail">
+                            <a class="audio_play" onclick="playPause('audio1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id="audio1" class="video-player-detail" controls>
+                                    <source src="{{ play_song.audio_file.url }}" type="video/mp4">
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin: 0px 0px 10px 20px;">
+                                        {{ play_song.song_title }} - {{ album.artist }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div id="audio" class="tab-pane fade in video-box-detail" style="opacity: 0.5">
+                            <form id='audio-form' action="{% url 'music:audio-upload' album.id play_song.id %}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if curr_user %}
+                                    <input class="video_file" type="file" name="audio_file"
+                                           onchange="document.getElementById('audio-form').submit();">
+
+                                    <h3 class='upload-text'>Click here to uplaod audio file</h3>
+                                {% else %}
+                                    <h3 class='missing-video'>No audio file</h3>
+                                {% endif %}
+                            </form>
+                        </div>
+                    {% endif %}
+                    {% if play_song.song_youtube_url %}
+                        <div id="youtube" class="tab-pane fade">
+                            <iframe height='310' width="100%" src="{{ play_song.song_youtube_url }}"></iframe>
+                        </div>
+                    {% else %}
+                        <div id="youtube" class="tab-pane fade in video-box-detail" style="opacity: 0.5">
+                            <form id='youtube-form' action="{% url 'music:youtube-embed' album.id play_song.id %}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if curr_user %}
+                                    <div class="col-lg-9" style="margin: 143px 10px;">
+                                        <input type="text" placeholder="Enter song youtube url!"
+                                               style='width: 400px;'
+                                               name="youtube_url_embed">
+                                    </div>
+                                    <div class="col-lg-2" style="margin: 143px 10px;">
+                                        <button type="submit" class="btn btn-sm btn-default"
+                                                style="height:25px; padding-top: 2.5px;">Submit
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <h3 class='missing-video'>No youtube url provided</h3>
+                                {% endif %}
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% elif song %}
+                <div class="tab-content" style="padding-top: 20px">
+                    {% if song.video_file %}
+                        <div id="video" class="tab-pane fade in active video-box-detail">
+                            <a class="video_play" onclick="playPause('video1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id="video1" class="video-player-detail" controls>
+                                    <source src="{{ song.video_file.url }}" type="video/mp4">
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin: 0px 0px 10px 20px;">
+                                        {{ song.song_title }} - {{ album.artist }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div id="video" class="tab-pane fade in active video-box-detail" style="opacity: 0.5">
+                            <form id='video-form' action="{% url 'music:video-upload' album.id song.id %}" method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if curr_user %}
+                                    <input class="video_file" type="file" name="video_file"
+                                           onchange="document.getElementById('video-form').submit();">
+
+                                    <h3 class='upload-text'>Click here to uplaod video file</h3>
+                                {% else %}
+                                    <h3 class='missing-video'>No video file</h3>
+                                {% endif %}
+                            </form>
+                        </div>
+                    {% endif %}
+                    {% if song.audio_file %}
+                        <div id="audio" class="tab-pane fade in video-box-detail">
+                            <a class="audio_play" onclick="playPause('audio1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id="audio1" class="video-player-detail">
+                                    <source src="{{ song.audio_file.url }}" type="video/mp4">
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin: 0px 0px 10px 20px;">
+                                        {{ song.song_title }} - {{ album.artist }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div id="audio" class="tab-pane fade in video-box-detail" style="opacity: 0.5">
+                            <form id='audio-form' action="{% url 'music:audio-upload' album.id song.id %}" method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if curr_user %}
+                                    <input class="video_file" type="file" name="audio_file"
+                                           onchange="document.getElementById('audio-form').submit();">
+
+                                    <h3 class='upload-text'>Click here to uplaod audio file</h3>
+                                {% else %}
+                                    <h3 class='missing-video'>No audio file</h3>
+                                {% endif %}
+                            </form>
+                        </div>
+                    {% endif %}
+                    {% if song.song_youtube_url %}
+                        <div id="youtube" class="tab-pane fade">
+                            <iframe height='310' width="100%" src="{{ song.song_youtube_url }}"></iframe>
+                        </div>
+                    {% else %}
+                        <div id="youtube" class="tab-pane fade in video-box-detail" style="opacity: 0.5">
+                            <form id='youtube-form' action="{% url 'music:youtube-embed' album.id song.id %}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if curr_user %}
+                                    <div class="col-lg-9" style="margin: 143px 10px;">
+                                        <input type="text" placeholder="Enter song youtube url!"
+                                               style='width: 400px;'
+                                               name="youtube_url_embed">
+                                    </div>
+                                    <div class="col-lg-2" style="margin: 143px 10px;">
+                                        <button type="submit" class="btn btn-sm btn-default"
+                                                style="height:25px; padding-top: 2.5px;">Submit
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <h3 class='missing-video'>No youtube url provided</h3>
+                                {% endif %}
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div id="AddSong" class="hideAddSong" style="padding: 270px 500px;">
+        <h4>Choose from:</h4>
+        <ul style="list-style-type: none; color: white">
+
+
+            <li id='AddSongText'>
+                <a href="{% url 'music:albums-add-mode' album.id %}">
+                    <h3><span class="glyphicon glyphicon-cd" aria-hidden="true"></span>&nbsp Albums</h3>
+                </a>
+            </li>
+            <li id="AddSongText">
+                <a href="#songs">
+                    <h3><span class="glyphicon glyphicon-music" aria-hidden="true"></span>&nbsp Songs</h3>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+
+        function playPause(source) {
+            var mySong = document.getElementById(source);
+            if (mySong.paused)
+                mySong.play();
+            else
+                mySong.pause();
+        }
+
+        function selectall(source) {
+
+            checkboxes_video = document.getElementsByName(source.name + '-video');
+            for (var i = 0, n = checkboxes_video.length; i < n; i++) {
+                checkboxes_video[i].checked = source.checked;
+            }
+
+            checkboxes_audio = document.getElementsByName(source.name + '-audio');
+            for (var i = 0, n = checkboxes_audio.length; i < n; i++) {
+                checkboxes_audio[i].checked = source.checked;
+            }
+
+            checkboxes_youtube = document.getElementsByName(source.name + '-youtube');
+            for (var i = 0, n = checkboxes_youtube.length; i < n; i++) {
+                checkboxes_youtube[i].checked = source.checked;
+            }
+        }
+
+
+        function showAddSong(divID) {
+            var item = document.getElementById(divID);
+            item.className = 'showAddSong'
+
+        }
+    </script>
+
+{% endblock %}
+
+

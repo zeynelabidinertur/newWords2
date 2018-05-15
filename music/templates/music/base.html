@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>NewWords | Public E-Library</title>
+    <!--css-->
+    <link rel="stylesheet" href="{% static 'music/css/bootstrap.css' %}" type="text/css" media="all"/>
+    <link rel="stylesheet" href="{% static 'music/css/mystyle.css' %}" type="text/css" media="all"/>
+    <!--css-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link rel="stylesheet" href="{% static 'music/css/flexslider.css' %}" type="text/css" media="screen"/>
+    <!--js-->
+    <script src="{% static 'music/js/jquery.min.js' %}"></script>
+    <script src="{% static 'music/js/bootstrap.min.js' %}"></script>
+    <!--js-->
+    <!--webfonts-->
+    <link href='//fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
+          rel='stylesheet' type='text/css'>
+    <!--webfonts-->
+    <script src="{% static 'music/js/responsiveslides.min.js' %}"></script>
+    <script>
+        $(function () {
+            $("#slider").responsiveSlides({
+                auto: true,
+                nav: true,
+                speed: 500,
+                namespace: "callbacks",
+                pager: true,
+            });
+        });
+    </script>
+    <!--Include jQuery & Filterizr-->
+    <script src="{% static 'music/js/jquery.filterizr.js' %}"></script>
+    <script src="{% static 'music/js/controls.js' %}"></script>
+    <!--Kick off Filterizr-->
+    <script type="text/javascript">
+        $(function () {
+            //Initialize filterizr with default options
+            $('.filtr-container').filterizr();
+        });
+    </script>
+    <!--gallery-->
+    <!--startsmothscrolling-->
+    <script type="text/javascript" src="{% static 'music/js/move-top.js' %}"></script>
+    <script type="text/javascript" src="{% static 'music/js/easing.js' %}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({scrollTop: $(this.hash).offset().top}, 1200);
+            });
+        });
+    </script>
+    <script src="{% static 'music/js/jquery.swipebox.min.js' %}"></script>
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $(".swipebox").swipebox();
+        });
+    </script>
+    <!--swipe box js-->
+    <style>
+
+
+    </style>
+</head>
+<body {% block background_image %}{% endblock %}>
+<!--header-->
+
+<nav class="navbar navbar-inverse"
+     style="padding: 0px 0px; position: fixed; top: 0; width:100%; overflow: hidden;z-index: 9999;">
+    <div class="container-fluid">
+
+        <!-- Header -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'music:index' %}"><i>Home</i></a>
+        </div>
+
+        <!-- Items -->
+        <div class="collapse navbar-collapse" id="topNavBar">
+
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{% url 'music:albums' %}">
+                        <span class="glyphicon glyphicon-cd" aria-hidden="true"></span>&nbsp Albums
+                    </a>
+                </li>
+                <!--
+                <li>
+                    <a href="#songs">
+                        <span class="glyphicon glyphicon-music" aria-hidden="true"></span>&nbsp Songs
+                    </a>
+                </li>-->
+                <li>
+                    <input style='width: 570px; height: 40px; border-radius: 10px; align: center; margin: 5px 0px;'
+                           type="text" id="myInput" onkeyup="myFunction()"
+                           placeholder="Search for albums, songs, artists..">
+
+                </li>
+            </ul>
+
+
+            <ul class="nav navbar-nav navbar-right">
+
+                {% block song_add %}
+                {% endblock %}
+                {% if user.is_authenticated %}
+                    <li class="">
+                        <a href="{% url 'music:bookshelf-create' %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp Add Album
+                        </a>
+                    </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <li class="">
+                        <a href="{% url 'music:user-index' user.id %}">
+                            <span aria-hidden="true"></span>&nbsp <i>{{ user.username }}</i>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="{% url 'music:logout' %}?next={% url 'music:index' %}">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="">
+                        <a href="{% url 'music:login' %}">
+                            <span class="glyphicon glyphicon-register" aria-hidden="true"></span>&nbsp Login
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="">
+                    <a href="{% url 'music:register' %}">
+                        <span class="glyphicon glyphicon-register" aria-hidden="true"></span>&nbsp Register
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <table class='search-table' id="myTable" style="margin: 0px 185px; width: 570px; display: none; background: white;">
+
+    </table>
+</div>
+
+<div onmouseover='document.getElementById("myTable").style.display = "none"'>
+    {% block body %}
+    {% endblock %}
+</div>
+
+<script>
+
+    function myFunction() {
+        var input, filter, table, tr, td, i, num;
+        document.getElementById('myTable').style.display = "inline";
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+
+        while (table.rows.length > 0) {
+            table.deleteRow(0);
+        }
+        num = 0;
+        "{% for album in albums %}"
+            if ("{{ album.album_title }}".toUpperCase().search(filter) !== -1) {
+                var row = table.insertRow(num);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                cell1.innerHTML = "<a href='{% url "music:song-set" album.id %}' style='cursor: pointer; text-decoration: none;'><p>{{ album.album_title }}</p></a>";
+                cell2.innerHTML = "<small>Album</small>";
+                cell1.style.width = '580px';
+                if (num > 5) {
+                    return;
+                }
+                num++;
+
+            }
+            "{% endfor %}"
+        "{% for album in albums %}"
+            "{% for song in album.song_set.all %}"
+                if ("{{ song.song_title }}".toUpperCase().search(filter) !== -1) {
+                    var row = table.insertRow(num);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    cell1.innerHTML = "<a href='{% url "music:albums-play-song" album.id song.id %}' style='cursor: pointer; text-decoration: none;'><p>{{ song.song_title }}</p></a>";
+                    cell2.innerHTML = "<small>Song</small>";
+                    cell1.style.width = '580px';
+
+                    if (num > 5) {
+                        return;
+                    }
+                    num++;
+                }
+                "{% endfor %}"
+            "{% endfor %}"
+    }
+
+
+</script>
+</body>
+</html>

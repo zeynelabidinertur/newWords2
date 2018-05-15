@@ -1,0 +1,159 @@
+{% extends 'music/base.html' %}
+{% load static %}
+{% block background_image %}
+    style="background-image: url('{% static "music/images/maxresdefault.jpg" %}');
+    background-attachment: fixed;"
+{% endblock %}
+{% block body %}
+    <form action="{% url 'music:song-add' album_id %}" method="post">
+        {% csrf_token %}
+        <div class="container-fluid" style="margin-top: 120px;">
+            <div class="col-lg-4 scrollbar-area" style="padding: 10px 0px; overflow-y: scroll; height: 540px;">
+                <div style="height: 100%; width: 100%; margin-right: 10px; cursor: auto;">
+                    <ul style="list-style-type: none;">
+                        {% for album in albums %}
+                            <li>
+                                <div class="col-lg-1" style="padding: 66px 0px">
+                                    <input id="{{ album.id }}" type="checkbox" name="album{{ album.id }}"
+                                           value="{{ album.id }}" onclick="selectall(this)"/>
+                                </div>
+                                <a data-toggle="tab" href="#album{{ album.id }}">
+                                    <div class="col-lg-11">
+                                        <div class="col-lg-5" style="padding: 0px;
+                                 margin: 2px 5px 2px 0px; width: 150px; height: 150px">
+                                            <img src="{{ album.album_logo.url }}"
+                                                 style="width: 100%; height: 100%; border-radius: 10px;">
+                                        </div>
+                                        <div class="col-lg-7" style="padding: 0px;
+                                 margin: 2px 0px 2px 5px; width: 200px; height: 150px">
+                                            <ul style="list-style-type:none; color: lightgrey;">
+                                                <li>
+                                                    <h4 style="white-space: nowrap; overflow:hidden; text-overflow: ellipsis;">
+                                                        Title: <strong>{{ album.album_title }}</strong></h4>
+                                                </li>
+                                                <li>
+                                                    <h4 style="white-space: nowrap; overflow:hidden; text-overflow: ellipsis;">
+                                                        Artist: <strong>{{ album.artist }}</strong></h4>
+                                                </li>
+                                                <li>
+                                                    <h4 style="white-space: nowrap; overflow:hidden; text-overflow: ellipsis;">
+                                                        Genre: <strong>{{ album.genre }}</strong></h4>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 tab-content" style="padding: 10px 30px;">
+                {% for album in albums %}
+                    <ul id="album{{ album.id }}" class="tab-pane fade in" style="list-style-type: none;">
+                        {% for song in album.song_set.all %}
+                            <li class="row">
+                                <div class="col-lg-1">
+                                    <input type="checkbox" name="songs" id = '{{ album.id }}-song{{ song.id }}'
+                                           value="{{ song.id }}" onclick="cancelselectall(this)"/>
+                                </div>
+                                <div class="col-lg-11" style="color:#cfcee7;">
+                                    <i class="glyphicon glyphicon-play"></i>
+                                    <strong>{{ song.song_title }}</strong>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+            <div class="col-lg-4" style="padding-top: 10px">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#video" data-toggle="tab" href="#">Video</a></li>
+                    <li><a href="#audio" data-toggle="tab" href="#">Audio</a></li>
+                    <li><a href="#youtube" data-toggle="tab" href="#">Youtube</a></li>
+                </ul>
+                <div class="tab-content" style="padding-top: 20px">
+                    {% if song.video_file %}
+                        <div id="video" class="tab-pane fade in active video-box-detail">
+                            <a class="video_play" onclick="playPause('video1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id="video1" class="video-player-detail">
+                                    <source src="{{ song.video_file.url }}" type="video/mp4">
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin: 0px 0px 10px 20px;">
+                                        {{ song.song_title }} - {{ album.artist }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div id="video" class="tab-pane fade in active video-box-detail" style="opacity: 0.5">
+                            <h3 class='missing-video'>No video file</h3>
+                        </div>
+                    {% endif %}
+                    {% if song.audio_file %}
+                        <div id="audio" class="tab-pane fade in video-box-detail">
+                            <a class="audio_play" onclick="playPause('audio1')"
+                               style="overflow:hidden; text-overflow: ellipsis;">
+                                <video id="audio1" class="video-player-detail">
+                                    <source src="{{ song.audio_file.url }}" type="video/mp4">
+                                </video>
+                                <div class="overlay-desc">
+                                    <h4 style="color: white; margin: 0px 0px 10px 20px;">
+                                        {{ song.song_title }} - {{ album.artist }}
+                                    </h4>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div id="audio" class="tab-pane fade in video-box-detail" style="opacity: 0.5">
+                            <h3 class='missing-video'>No audio file</h3>
+                        </div>
+                    {% endif %}
+                    {% if song.song_youtube_url %}
+                        <div id="youtube" class="tab-pane fade">
+                            <iframe height='310' width="100%" src="{{ song.song_youtube_url }}"></iframe>
+                        </div>
+                    {% else %}
+                        <div id="youtube" class="tab-pane fade in video-box-detail" style="opacity: 0.5">
+                            <h3 class='missing-video'>No youtube url provided</h3>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class='showAddSongAlbums'>
+            <button type="submit" class="btn btn-default btn-md" style="margin:70px 560px;">
+                <i class="glyphicon glyphicon-plus"></i> <strong>Add Selected Songs</strong></button>
+        </div>
+    </form>
+    <script>
+
+        function playPause(source) {
+            var mySong = document.getElementById(source);
+            if (mySong.paused)
+                mySong.play();
+            else
+                mySong.pause();
+        }
+
+        function selectall(source) {
+            var checkboxes_video = document.getElementsByName('songs');
+            for (var i = 0, n = checkboxes_video.length; i < n; i++) {
+                if (checkboxes_video[i].id.split('-')[0] == source.value)
+                    checkboxes_video[i].checked = source.checked;
+            }
+        }
+
+        function cancelselectall(source) {
+            var checkbox = document.getElementById(source.id);
+
+            if (!checkbox.checked) {
+                var checkbox_value = source.id.split('-')[0]
+                var mother_checkbox_name = 'album' + checkbox_value
+                document.getElementsByName(mother_checkbox_name)[0].checked = false;
+            }
+        }
+    </script>
+{% endblock %}

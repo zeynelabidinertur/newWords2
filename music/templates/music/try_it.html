@@ -1,0 +1,19 @@
+<p> {{ curr_user.id }} - {{ curr_user }}</p>
+
+{%  for album in curr_user.albums.all %}
+    <ul>
+    <p>{{ album.id }}  - {{ album.album_title }} - {{ album.public}}</p>
+    {% for song in album.song_set.all%}
+        <ul>
+        <p>{{ song.id }}  - {{ song.song_title }}</p>
+        <p>{{ song.video_file.url }} Song - {{ song.audio_file.url }} - {{ song.song_youtube_url }}</p>
+        </ul>
+    {% endfor %}
+    </ul>
+{% endfor %}
+
+
+{% for album in album1 %}
+    {{ album.id }}
+{% endfor %}
+
